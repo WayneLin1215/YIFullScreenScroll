@@ -24,6 +24,11 @@
 #define STATUS_BAR_HEIGHT       (IS_PORTRAIT ? [UIApplication sharedApplication].statusBarFrame.size.height : [UIApplication sharedApplication].statusBarFrame.size.width)
 
 #define MAX_SHIFT_PER_SCROLL    10  // used when _shouldHideUIBarsGradually=YES
+#define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+#define SCREEN_WIDTH ([[UIScreen mainScreen] bounds].size.width)
+#define SCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
+#define SCREEN_MAX_LENGTH (MAX(SCREEN_WIDTH, SCREEN_HEIGHT))
+#define IS_IPHONE_X  (IS_IPHONE && SCREEN_MAX_LENGTH == 812.0)
 
 static char __fullScreenScrollContext;
 
@@ -566,7 +571,11 @@ static char __isFullScreenScrollViewKey;
         }
         
         if (canLayoutUIBars) {
-            toolbar.top = MIN(MAX(toolbar.top+deltaY, toolbarSuperviewHeight-toolbar.height), toolbarSuperviewHeight);
+            if (IS_IPHONE_X) {
+                toolbar.top = MIN(MAX(toolbar.top+deltaY, toolbarSuperviewHeight - (toolbar.height + 34)), toolbarSuperviewHeight);
+            } else {
+                toolbar.top = MIN(MAX(toolbar.top+deltaY, toolbarSuperviewHeight - toolbar.height), toolbarSuperviewHeight);
+            }
         }
     }
     
